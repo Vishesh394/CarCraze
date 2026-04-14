@@ -1,42 +1,52 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Services</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Services | CarBarn</title>
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/styles.css">
 </head>
-<body>
+<body class="bg-surface">
 
 <%- include('../partials/navbar') %>
 
-<div class="container mt-5">
-    <h2 class="text-center mb-4">Our Services</h2>
-
-    <div class="row">
-        <div class="col-md-4">
-            <div class="card p-3">
-                <h5>Car Wash</h5>
-                <p>Complete exterior and interior cleaning</p>
-                <p><strong>₹500</strong></p>
-            </div>
+<main class="section">
+    <div class="container">
+        <div class="section-heading text-center mb-5">
+            <p class="eyebrow">Welcome back<% if (currentUser) { %>, <%= currentUser.fullname.split(' ')[0] %><% } %></p>
+            <h2 class="display-6 fw-semibold mb-2">Services Designed Around Your Car</h2>
+            <p class="mb-0">Explore trusted service options and choose the care your vehicle needs today.</p>
         </div>
 
-        <div class="col-md-4">
-            <div class="card p-3">
-                <h5>Oil Change</h5>
-                <p>Engine oil replacement service</p>
-                <p><strong>₹1200</strong></p>
+        <% if (services && services.length) { %>
+            <div class="row g-4">
+                <% services.forEach(service => { %>
+                    <div class="col-md-6 col-lg-4">
+                        <article class="car-card h-100">
+                            <div class="car-photo" style="background-image:url('<%= service.image || "https://images.unsplash.com/photo-1485291571150-772bcfc10da5?auto=format&fit=crop&w=1200&q=80" %>')"></div>
+                            <div class="car-card-body d-flex flex-column gap-2">
+                                <div class="d-flex justify-content-between align-items-center gap-3">
+                                    <h5 class="mb-0"><%= service.title %></h5>
+                                    <span class="badge rounded-pill bg-primary-subtle text-primary">Rs <%= service.priceMin ?? service.price %> - <%= service.priceMax ?? service.price %></span>
+                                </div>
+                                <p class="small mb-3"><%= service.description || "Professional service delivered with attention to detail and dependable support." %></p>
+                                <a href="/booking" class="btn btn-primary mt-auto">Book This Service</a>
+                            </div>
+                        </article>
+                    </div>
+                <% }) %>
             </div>
-        </div>
-
-        <div class="col-md-4">
-            <div class="card p-3">
-                <h5>Full Service</h5>
-                <p>Complete car inspection & servicing</p>
-                <p><strong>₹3000</strong></p>
+        <% } else { %>
+            <div class="car-card p-4 text-center">
+                <h5 class="mb-2">Services are being updated</h5>
+                <p class="mb-0">We are adding new service options right now. Please check back shortly.</p>
             </div>
-        </div>
+        <% } %>
     </div>
-</div>
+</main>
+
+<%- include('../partials/footer') %>
 
 </body>
 </html>

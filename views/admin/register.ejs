@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Admin Registration | CarBarn</title>
+    <link rel="stylesheet" href="/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="/css/styles.css" />
+</head>
+
+<body class="bg-surface">
+    <%- include("../partials/navbar") %>
+        <main class="section">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-md-6 col-lg-5">
+                        <div class="car-card">
+                            <div class="car-card-body">
+                                <p class="eyebrow text-uppercase text-secondary mb-1">Admin setup</p>
+                                <h1 class="h3 fw-semibold text-white mb-3">Create an admin account</h1>
+                                <form action="/admin/register" method="post" class="d-grid gap-3">
+                                    <div>
+                                        <label class="form-label text-secondary small">Full Name</label>
+                                        <input name="fullname" class="form-control" required />
+                                    </div>
+                                    <div>
+                                        <label class="form-label text-secondary small">Email Address</label>
+                                        <input name="email" type="email" class="form-control" required />
+                                    </div>
+                                    <div>
+                                        <label class="form-label text-secondary small">Password</label>
+                                        <input name="password" type="password" class="form-control" required />
+                                    </div>
+                                    <button type="submit" class="btn btn-primary w-100">Create Account</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+</body>
+
+</html>

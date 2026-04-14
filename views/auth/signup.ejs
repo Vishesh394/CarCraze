@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Sign Up | CarBarn</title>
+  <link rel="stylesheet" href="/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="/css/styles.css" />
+</head>
+<body class="bg-surface">
+  <%- include("../partials/navbar") %>
+
+  <main class="section">
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-lg-6 col-xl-5">
+          <div class="car-card">
+            <div class="car-card-body p-4 p-md-5">
+              <p class="eyebrow mb-2">Create your account</p>
+              <h1 class="display-6 mb-3">Join CarBarn for a better customer experience.</h1>
+              <p class="mb-4">Sign up to explore available services, book your visit faster, and keep your car care journey in one place.</p>
+
+              <% if (error) { %>
+                <div class="alert alert-danger rounded-4 mb-4"><%= error %></div>
+              <% } %>
+
+              <form action="/signup" method="post" class="d-grid gap-3">
+                <input type="hidden" name="nextPath" value="<%= nextPath %>" />
+                <div>
+                  <label class="form-label small">Full Name</label>
+                  <input
+                    type="text"
+                    name="fullname"
+                    class="form-control"
+                    value="<%= formData.fullname || '' %>"
+                    required
+                  />
+                </div>
+                <div>
+                  <label class="form-label small">Email Address</label>
+                  <input
+                    type="email"
+                    name="email"
+                    class="form-control"
+                    value="<%= formData.email || '' %>"
+                    required
+                  />
+                </div>
+                <div>
+                  <label class="form-label small">Password</label>
+                  <input type="password" name="password" class="form-control" required />
+                </div>
+                <button type="submit" class="btn btn-primary w-100">Create Account</button>
+              </form>
+
+              <p class="small mt-4 mb-0">
+                Already have an account?
+                <a href="/login<%= nextPath && nextPath !== '/' ? '?next=' + encodeURIComponent(nextPath) : '' %>">Sign in</a>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <%- include("../partials/footer") %>
+</body>
+</html>

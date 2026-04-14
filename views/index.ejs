@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>CarBarn Service | Car care, detailing, repairs</title>
+  <link rel="stylesheet" href="/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="/css/styles.css" />
+</head>
+
+<body class="bg-surface">
+  <%- include("partials/navbar") %>
+  <%- include("partials/hero") %>
+
+  <main>
+    <!-- Why choose us -->
+    <section class="section container">
+      <div class="section-heading d-flex align-items-center justify-content-between flex-wrap gap-3">
+        <div>
+          <p class="eyebrow">Why Choose CarBarn</p>
+          <h2 class="display-6 fw-semibold mb-0">Expert care built around your car and your schedule.</h2>
+        </div>
+        <a class="btn btn-outline-light btn-glow" href="/booking">Reserve a Service Slot</a>
+      </div>
+
+      <div class="row g-4 mt-2">
+        <div class="col-md-4">
+          <div class="feature-tile">
+            <span class="feature-icon bg-primary-subtle text-primary">🔧</span>
+            <h5>Trusted maintenance</h5>
+            <p>Warranty-friendly service, quality fluids, and careful inspections on every visit.</p>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="feature-tile">
+            <span class="feature-icon bg-success-subtle text-success">🧽</span>
+            <h5>Complete detailing</h5>
+            <p>Interior and exterior care that restores shine, comfort, and that just-cleaned feel.</p>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="feature-tile">
+            <span class="feature-icon bg-warning-subtle text-warning">⚡</span>
+            <h5>Quick diagnostics</h5>
+            <p>Fast checks, clear reports, and prompt fixes so you can get back on the road with confidence.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Core services -->
+    <section class="section container">
+      <div class="section-heading">
+        <p class="eyebrow">Services</p>
+        <h2 class="display-6 fw-semibold mb-0">Choose the service that fits your car today.</h2>
+      </div>
+      <div class="row g-4 mt-1">
+        <div class="col-lg-4 col-md-6">
+          <article class="car-card">
+            <div class="car-photo car-photo-1"></div>
+            <div class="car-card-body">
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <h5 class="mb-0">Essential Service</h5>
+                <span class="badge rounded-pill bg-primary-subtle text-primary">From ₹2,499</span>
+              </div>
+              <p class="small text-secondary mb-3">Oil and filter replacement, a full health check, and inspection of tyres, battery, and brakes.</p>
+              <div class="d-flex align-items-center gap-3">
+                <span class="spec-pill">Quality fluids</span>
+                <span class="spec-pill">Same-day slots</span>
+                <span class="spec-pill">Pickup available</span>
+              </div>
+            </div>
+          </article>
+        </div>
+        <div class="col-lg-4 col-md-6">
+          <article class="car-card">
+            <div class="car-photo car-photo-2"></div>
+            <div class="car-card-body">
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <h5 class="mb-0">Signature Detail</h5>
+                <span class="badge rounded-pill bg-success-subtle text-success">From ₹3,999</span>
+              </div>
+              <p class="small text-secondary mb-3">Deep cleaning, paint enhancement, and interior care for a fresh, refined finish.</p>
+              <div class="d-flex align-items-center gap-3">
+                <span class="spec-pill">Ceramic coating</span>
+                <span class="spec-pill">Cabin refresh</span>
+                <span class="spec-pill">Paint protection</span>
+              </div>
+            </div>
+          </article>
+        </div>
+        <div class="col-lg-4 col-md-6">
+          <article class="car-card">
+            <div class="car-photo car-photo-3"></div>
+            <div class="car-card-body">
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <h5 class="mb-0">Performance Check</h5>
+                <span class="badge rounded-pill bg-warning-subtle text-warning">From ₹3,499</span>
+              </div>
+              <p class="small text-secondary mb-3">Detailed diagnostics, system checks, and a road-tested report to spot issues early.</p>
+              <div class="d-flex align-items-center gap-3">
+                <span class="spec-pill">Diagnostic scan</span>
+                <span class="spec-pill">Hybrid ready</span>
+                <span class="spec-pill">Service report</span>
+              </div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- Stats and CTA -->
+    <section class="section trust-band container-fluid rounded-4 py-5 px-4 px-md-5 mb-5">
+      <div class="row align-items-center g-4">
+        <div class="col-lg-6">
+          <p class="eyebrow text-uppercase mb-1">Drive with confidence</p>
+          <h2 class="display-6 fw-semibold">Every visit is backed by care you can count on.</h2>
+          <p>Clear estimates, detailed service records, and dependable follow-up help you leave with total peace of mind.</p>
+          <div class="d-flex flex-wrap gap-3 mt-3">
+            <a class="btn btn-primary btn-lg" href="/booking">Schedule Your Visit</a>
+            <a class="btn btn-outline-light btn-lg" href="/services">View All Services</a>
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <div class="stats-grid">
+            <div class="stat-tile">
+              <span class="stat-number">18k+</span>
+              <p class="mb-0">Jobs completed</p>
+            </div>
+            <div class="stat-tile">
+              <span class="stat-number">4.9★</span>
+              <p class="mb-0">Customer rating</p>
+            </div>
+            <div class="stat-tile">
+              <span class="stat-number">24 hr</span>
+              <p class="mb-0">Average turnaround</p>
+            </div>
+            <div class="stat-tile">
+              <span class="stat-number">12 mo</span>
+              <p class="mb-0">Service support</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <%- include("partials/footer") %>
+</body>
+</html>
