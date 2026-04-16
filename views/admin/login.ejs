@@ -18,14 +18,19 @@
             <div class="car-card-body">
               <p class="eyebrow text-uppercase text-secondary mb-1">Admin access</p>
               <h1 class="h3 fw-semibold text-white mb-3">Sign in to the dashboard</h1>
-              <form action="/admin/login" method="post" class="d-grid gap-3">
+              <% if (typeof error !== "undefined" && error) { %>
+                <div class="alert alert-danger mb-3" role="alert">
+                  <%= error %>
+                </div>
+              <% } %>
+              <form action="/admin/login" method="post" class="d-grid gap-3" autocomplete="off">
                 <div>
                   <label class="form-label text-secondary small">Email Address</label>
-                  <input name="email" type="email" class="form-control" required />
+                  <input name="email" type="email" class="form-control" value="" autocomplete="off" required />
                 </div>
                 <div>
                   <label class="form-label text-secondary small">Password</label>
-                  <input name="password" type="password" class="form-control" required />
+                  <input name="password" type="password" class="form-control" autocomplete="new-password" required />
                 </div>
                 <button type="submit" class="btn btn-primary w-100">Sign In</button>
               </form>

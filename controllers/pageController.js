@@ -100,10 +100,6 @@ exports.renderBookingSuccess = (req, res) => {
   return res.render("pages/booking-success", { booking });
 };
 
-exports.renderShop = (req, res) => {
-  return res.render("pages/shop");
-};
-
 exports.renderLegacyHome = (req, res) => {
   return res.render("pages/home");
 };

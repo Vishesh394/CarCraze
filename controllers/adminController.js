@@ -1,9 +1,12 @@
-const Admin = require("../models/admin")
+const Admin = require("../models/Admin")
 const bcrypt = require("bcryptjs")
 const jwt = require("jsonwebtoken")
 const mongoose = require("mongoose")
 const Service = require("../models/service")
 const Booking = require("../models/Booking")
+const Accessory = require("../models/Accessory")
+
+const accessoryCategories = ["Interior", "Exterior", "Electronics", "Maintenance"]
 
 const isBrowserFormRequest = (req) => {
     const acceptHeader = req.headers.accept || ""
@@ -34,6 +37,34 @@ const normalizePricing = (body) => {
         price: priceMin,
         priceMin,
         priceMax
+    }
+}
+
+const normalizeAccessoryData = (body) => {
+    const price = Number(body.price)
+
+    if (!body.name || !body.category || Number.isNaN(price)) {
+        return { error: "Product name, category, and price are required" }
+    }
+
+    if (!accessoryCategories.includes(body.category)) {
+        return { error: "Please choose a valid product category" }
+    }
+
+    if (price < 0) {
+        return { error: "Price cannot be negative" }
+    }
+
+    return {
+        name: body.name.trim(),
+        category: body.category,
+        price,
+        image: body.image?.trim() || "",
+        description: body.description?.trim() || "Quality accessory selected for everyday car care.",
+        tags: body.tags
+            ? body.tags.split(",").map((tag) => tag.trim()).filter(Boolean)
+            : [],
+        isRecommended: body.isRecommended === "on"
     }
 }
 
@@ -81,32 +112,45 @@ exports.register = async (req, res) => {
 exports.login = async (req, res) => {
     try {
         const { email, password } = req.body
+        const wantsHTML = isBrowserFormRequest(req)
+        const renderLoginError = (message) => {
+            return res.status(400).render("admin/login", {
+                error: message,
+                formData: {}
+            })
+        }
 
         //check if admin exists
         const admin = await Admin.findOne({ email })
         if (!admin) {
+            if (wantsHTML) {
+                return renderLoginError("Invalid email or password. Please try again.")
+            }
             return res.status(400).json({ message: "Invalid email or password" })
         }
         //compare password
         const isMatch = await bcrypt.compare(password, admin.password)
         if (!isMatch) {
-            return res.status(400).json({ message: "Invalid Email or password" })
+            if (wantsHTML) {
+                return renderLoginError("Invalid email or password. Please try again.")
+            }
+            return res.status(400).json({ message: "Invalid email or password" })
         }
         
         const token = jwt.sign(
-            { id: admin._id },
+            { id: admin._id, type: "admin" },
             process.env.JWT_SECRET, 
             { expiresIn: "1d" }
         )
         // set token cookie for browser flows
         res.cookie("token", token, {
             httpOnly: true,
+            sameSite: "lax",
             maxAge: 24 * 60 * 60 * 1000
         })
 
         // If browser form submission, redirect to dashboard; else return JSON
-        const wantsHTML = req.headers.accept && req.headers.accept.includes("text/html")
-        if (wantsHTML || req.headers["content-type"] === "application/x-www-form-urlencoded") {
+        if (wantsHTML) {
             return res.redirect("/admin/dashboard")
         }
 
@@ -128,7 +172,7 @@ exports.login = async (req, res) => {
 // in an httpOnly cookie, clear it as well.
 exports.logout = (req, res) => {
     try {
-        res.clearCookie("token")
+        res.clearCookie("token", { path: "/" })
         const wantsHTML = req.headers.accept && req.headers.accept.includes("text/html")
         if (wantsHTML) {
             return res.redirect("/admin/login")
@@ -186,7 +230,7 @@ exports.listServices = async (req, res) => {
 
 exports.listBookings = async (req, res) => {
     try {
-        const bookings = await Booking.find()
+        const bookings = await Booking.find({ status: { $nin: ["completed", "cancelled"] } })
             .populate("service", "title priceMin priceMax price")
             .populate("user", "fullname email")
             .sort({ createdAt: -1 })
@@ -196,6 +240,58 @@ exports.listBookings = async (req, res) => {
         }
 
         return res.render("admin/bookings", { bookings })
+    } catch (error) {
+        console.log(error)
+        return res.status(500).json({ message: "Server Error" })
+    }
+}
+
+exports.listCompletedBookings = async (req, res) => {
+    try {
+        const bookings = await Booking.find({ status: "completed" })
+            .populate("service", "title priceMin priceMax price")
+            .populate("user", "fullname email")
+            .sort({ completedAt: -1, updatedAt: -1 })
+
+        if (!isBrowserFormRequest(req)) {
+            return res.status(200).json({ bookings })
+        }
+
+        return res.render("admin/completedBookings", { bookings })
+    } catch (error) {
+        console.log(error)
+        return res.status(500).json({ message: "Server Error" })
+    }
+}
+
+exports.completeBooking = async (req, res) => {
+    try {
+        if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+            return isBrowserFormRequest(req)
+                ? res.redirect("/admin/bookings")
+                : res.status(400).json({ message: "Invalid booking id" })
+        }
+
+        const booking = await Booking.findByIdAndUpdate(
+            req.params.id,
+            {
+                status: "completed",
+                completedAt: new Date()
+            },
+            { new: true, runValidators: true }
+        )
+
+        if (!booking) {
+            return isBrowserFormRequest(req)
+                ? res.redirect("/admin/bookings")
+                : res.status(404).json({ message: "Booking not found" })
+        }
+
+        if (isBrowserFormRequest(req)) {
+            return res.redirect("/admin/bookings")
+        }
+
+        return res.status(200).json({ message: "Booking marked as completed", booking })
     } catch (error) {
         console.log(error)
         return res.status(500).json({ message: "Server Error" })
@@ -290,6 +386,156 @@ exports.deleteService = async (req, res) => {
         }
 
         return res.status(200).json({ message: "Service deleted" })
+    } catch (error) {
+        console.log(error)
+        return res.status(500).json({ message: "Server Error" })
+    }
+}
+
+//--------- Accessories --------------
+exports.addAccessoryPage = (req, res) => {
+    return res.render("admin/addAccessory", {
+        categories: accessoryCategories,
+        formData: {},
+        error: null
+    })
+}
+
+exports.createAccessory = async (req, res) => {
+    try {
+        const accessoryData = normalizeAccessoryData(req.body)
+
+        if (accessoryData.error) {
+            if (isBrowserFormRequest(req)) {
+                return res.status(400).render("admin/addAccessory", {
+                    categories: accessoryCategories,
+                    formData: req.body,
+                    error: accessoryData.error
+                })
+            }
+            return res.status(400).json({ message: accessoryData.error })
+        }
+
+        await Accessory.create(accessoryData)
+
+        if (isBrowserFormRequest(req)) {
+            return res.redirect("/admin/accessories")
+        }
+        return res.status(201).json({ message: "Accessory added" })
+    } catch (error) {
+        console.log(error)
+        return res.status(500).json({ message: "Server Error" })
+    }
+}
+
+exports.listAccessories = async (req, res) => {
+    try {
+        const accessories = await Accessory.find().sort({ createdAt: -1 })
+
+        if (!isBrowserFormRequest(req)) {
+            return res.status(200).json({ accessories })
+        }
+
+        return res.render("admin/accessories", { accessories })
+    } catch (error) {
+        console.log(error)
+        return res.status(500).json({ message: "Server Error" })
+    }
+}
+
+exports.editAccessoryPage = async (req, res) => {
+    try {
+        if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+            return res.redirect("/admin/accessories")
+        }
+
+        const accessory = await Accessory.findById(req.params.id)
+
+        if (!accessory) {
+            return res.redirect("/admin/accessories")
+        }
+
+        return res.render("admin/editAccessory", {
+            accessory,
+            categories: accessoryCategories,
+            error: null
+        })
+    } catch (error) {
+        console.log(error)
+        return res.status(500).json({ message: "Server Error" })
+    }
+}
+
+exports.updateAccessory = async (req, res) => {
+    try {
+        if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+            return isBrowserFormRequest(req)
+                ? res.redirect("/admin/accessories")
+                : res.status(400).json({ message: "Invalid accessory id" })
+        }
+
+        const accessoryData = normalizeAccessoryData(req.body)
+
+        if (accessoryData.error) {
+            if (isBrowserFormRequest(req)) {
+                const existingAccessory = await Accessory.findById(req.params.id)
+                return res.status(400).render("admin/editAccessory", {
+                    accessory: {
+                        ...(existingAccessory ? existingAccessory.toObject() : {}),
+                        ...req.body,
+                        tags: req.body.tags
+                    },
+                    categories: accessoryCategories,
+                    error: accessoryData.error
+                })
+            }
+            return res.status(400).json({ message: accessoryData.error })
+        }
+
+        const accessory = await Accessory.findByIdAndUpdate(
+            req.params.id,
+            accessoryData,
+            { new: true, runValidators: true }
+        )
+
+        if (!accessory) {
+            return isBrowserFormRequest(req)
+                ? res.redirect("/admin/accessories")
+                : res.status(404).json({ message: "Accessory not found" })
+        }
+
+        if (isBrowserFormRequest(req)) {
+            return res.redirect("/admin/accessories")
+        }
+
+        return res.status(200).json({ message: "Accessory updated", accessory })
+    } catch (error) {
+        console.log(error)
+        return res.status(500).json({ message: "Server Error" })
+    }
+}
+
+exports.deleteAccessory = async (req, res) => {
+    try {
+        if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+            return isBrowserFormRequest(req)
+                ? res.redirect("/admin/accessories")
+                : res.status(400).json({ message: "Invalid accessory id" })
+        }
+
+        const accessory = await Accessory.findByIdAndDelete(req.params.id)
+
+        if (!accessory) {
+            return isBrowserFormRequest(req)
+                ? res.redirect("/admin/accessories")
+                : res.status(404).json({ message: "Accessory not found" })
+        }
+
+        if (isBrowserFormRequest(req)) {
+            return res.redirect("/admin/accessories")
+        }
+
+        return res.status(200).json({ message: "Accessory deleted" })
     } catch (error) {
         console.log(error)
         return res.status(500).json({ message: "Server Error" })

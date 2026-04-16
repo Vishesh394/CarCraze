@@ -114,6 +114,20 @@ a {
   font-weight: 600;
 }
 
+.cart-count-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.65rem;
+  height: 1.65rem;
+  padding: 0 0.48rem;
+  border-radius: 999px;
+  background: var(--primary);
+  color: #fff;
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+
 .section {
   padding: 4.25rem 0;
 }
@@ -374,6 +388,140 @@ a {
   padding: 1.5rem 1.5rem 1.7rem;
 }
 
+.shop-hero {
+  position: relative;
+  overflow: hidden;
+}
+
+.shop-hero::after {
+  content: "";
+  position: absolute;
+  inset: auto -8% -42% auto;
+  width: 360px;
+  height: 360px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(171, 25, 50, 0.12), transparent 64%);
+  pointer-events: none;
+}
+
+.cart-summary-card,
+.recommend-card {
+  position: relative;
+  height: 100%;
+  padding: 1.25rem;
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.66);
+  border: 1px solid rgba(23, 63, 122, 0.08);
+  box-shadow: var(--shadow-soft);
+}
+
+.cart-logo-button {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  gap: 0.9rem;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--secondary);
+  text-align: left;
+}
+
+.cart-logo-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  border-radius: 22px;
+  background: linear-gradient(135deg, var(--primary), var(--primary-deep));
+  color: #fff;
+  font-size: 0.82rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  box-shadow: 0 18px 34px rgba(171, 25, 50, 0.18);
+}
+
+.cart-panel {
+  padding-top: 1rem;
+  border-top: 1px solid rgba(23, 63, 122, 0.08);
+}
+
+.cart-line-item {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.9rem 0;
+  border-bottom: 1px solid rgba(23, 63, 122, 0.08);
+}
+
+.cart-line-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.cart-qty-btn,
+.cart-remove-btn {
+  border: 1px solid rgba(23, 63, 122, 0.12);
+  background: rgba(255, 255, 255, 0.78);
+  color: var(--secondary);
+  font-weight: 800;
+}
+
+.cart-qty-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  line-height: 1;
+}
+
+.cart-remove-btn {
+  padding: 0.25rem 0.6rem;
+  border-radius: 999px;
+  color: var(--primary);
+  font-size: 0.74rem;
+}
+
+.cart-total-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 0;
+  color: var(--secondary);
+}
+
+.recommend-card {
+  display: flex;
+  flex-direction: column;
+}
+
+.accessory-card {
+  transition: transform 180ms ease, box-shadow 180ms ease;
+}
+
+.accessory-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow);
+}
+
+.accessory-photo {
+  height: 210px;
+}
+
+.accessory-tag {
+  display: inline-flex;
+  padding: 0.35rem 0.7rem;
+  border-radius: 999px;
+  background: rgba(23, 63, 122, 0.07);
+  color: var(--secondary);
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
 .spec-pill {
   display: inline-flex;
   padding: 0.45rem 0.85rem;
@@ -417,6 +565,14 @@ a {
 .booking-note {
   padding-top: 1.2rem;
   border-top: 1px solid rgba(23, 63, 122, 0.08);
+}
+
+.booking-extra {
+  margin-top: 0.15rem;
+  padding: 1rem;
+  border: 1px solid rgba(23, 63, 122, 0.08);
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.58);
 }
 
 .alert-danger {

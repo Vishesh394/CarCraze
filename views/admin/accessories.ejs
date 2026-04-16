@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Accessories | Admin</title>
+  <link rel="stylesheet" href="/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="/css/styles.css" />
+</head>
+<body class="bg-surface">
+  <%- include("../partials/navbar") %>
+
+  <main class="section">
+    <div class="container">
+      <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
+        <div>
+          <p class="eyebrow text-secondary mb-1">Admin</p>
+          <h1 class="h3 fw-semibold text-dark mb-0">Shop Products</h1>
+          <p class="text-secondary small mb-0">Add, edit, and remove accessories shown in the customer shop.</p>
+        </div>
+        <div class="d-flex gap-2 flex-wrap">
+          <a class="btn btn-primary" href="/admin/accessories/add">Add Product</a>
+          <a class="btn btn-outline-light" href="/admin/dashboard">Back to Dashboard</a>
+        </div>
+      </div>
+
+      <% if (accessories && accessories.length) { %>
+        <div class="row g-4">
+          <% accessories.forEach(accessory => { %>
+            <div class="col-md-6 col-lg-4">
+              <article class="car-card h-100">
+                <div class="car-photo" style="height:160px; background-image:url('<%= accessory.image || '' %>');"></div>
+                <div class="car-card-body d-flex flex-column gap-2">
+                  <div class="d-flex justify-content-between align-items-start gap-3">
+                    <div>
+                      <span class="spec-pill mb-2"><%= accessory.category %></span>
+                      <h5 class="mb-0"><%= accessory.name %></h5>
+                    </div>
+                    <span class="badge rounded-pill bg-primary-subtle text-primary">Rs <%= accessory.price %></span>
+                  </div>
+
+                  <p class="small text-secondary mb-0"><%= accessory.description %></p>
+
+                  <% if (accessory.tags && accessory.tags.length) { %>
+                    <div class="d-flex flex-wrap gap-2">
+                      <% accessory.tags.forEach(tag => { %>
+                        <span class="accessory-tag"><%= tag %></span>
+                      <% }) %>
+                    </div>
+                  <% } %>
+
+                  <% if (accessory.isRecommended) { %>
+                    <p class="small mb-0"><strong>Recommended product</strong></p>
+                  <% } %>
+
+                  <p class="text-muted small mb-0">Added <%= accessory.createdAt.toDateString() %></p>
+
+                  <div class="d-flex gap-2 pt-2 mt-auto flex-wrap">
+                    <a href="/admin/accessories/<%= accessory._id %>/edit" class="btn btn-outline-primary btn-sm">Edit Product</a>
+                    <form action="/admin/accessories/<%= accessory._id %>/delete" method="POST" class="m-0" onsubmit="return confirm('Delete <%= accessory.name %>?')">
+                      <button type="submit" class="btn btn-outline-danger btn-sm">Delete Product</button>
+                    </form>
+                  </div>
+                </div>
+              </article>
+            </div>
+          <% }) %>
+        </div>
+      <% } else { %>
+        <div class="car-card p-4">
+          <p class="text-secondary mb-0">No accessories have been added yet. Create your first shop product to get started.</p>
+        </div>
+      <% } %>
+    </div>
+  </main>
+
+  <script src="/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const pageController = require("../controllers/pageController");
+const accessoryController = require("../controllers/accessoryController");
 const userController = require("../controllers/userController");
 const { requireUser, redirectIfAuthenticated } = require("../middleware/auth");
 
@@ -10,7 +11,8 @@ router.get("/services", requireUser, pageController.renderServices);
 router.get("/booking", requireUser, pageController.renderBooking);
 router.post("/booking", requireUser, pageController.confirmBooking);
 router.get("/booking/success", requireUser, pageController.renderBookingSuccess);
-router.get("/shop", requireUser, pageController.renderShop);
+router.get("/shop", requireUser, accessoryController.renderAccessories);
+router.get("/accessories", requireUser, accessoryController.renderAccessories);
 router.get("/home", pageController.renderLegacyHome);
 
 router.get("/signup", redirectIfAuthenticated, userController.renderSignup);

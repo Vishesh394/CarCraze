@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Bookings | Admin</title>
+  <title>Service History | Admin</title>
   <link rel="stylesheet" href="/css/bootstrap.min.css" />
   <link rel="stylesheet" href="/css/styles.css" />
 </head>
@@ -15,10 +15,13 @@
       <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
         <div>
           <p class="eyebrow text-secondary mb-1">Admin</p>
-          <h1 class="h3 fw-semibold text-dark mb-0">Customer Bookings</h1>
-          <p class="text-secondary small mb-0">Review all service requests placed by customers.</p>
+          <h1 class="h3 fw-semibold text-dark mb-0">Service History</h1>
+          <p class="text-secondary small mb-0">Review completed bookings and past customer service records.</p>
         </div>
-        <a class="btn btn-outline-light" href="/admin/dashboard">Back to Dashboard</a>
+        <div class="d-flex gap-2 flex-wrap">
+          <a class="btn btn-outline-light" href="/admin/bookings">Active Bookings</a>
+          <a class="btn btn-outline-light" href="/admin/dashboard">Back to Dashboard</a>
+        </div>
       </div>
 
       <% if (bookings && bookings.length) { %>
@@ -32,7 +35,7 @@
                       <h5 class="mb-1"><%= booking.serviceTitle %></h5>
                       <p class="small text-secondary mb-0">Service Date: <%= new Date(booking.bookingDate).toDateString() %></p>
                     </div>
-                    <span class="badge rounded-pill bg-primary-subtle text-primary text-capitalize"><%= booking.status %></span>
+                    <span class="badge rounded-pill bg-success-subtle text-success text-capitalize">Fulfilled</span>
                   </div>
 
                   <div class="booking-note">
@@ -42,21 +45,22 @@
                   </div>
 
                   <button
-                    class="btn btn-outline-light w-100"
+                    class="btn btn-outline-light w-100 mt-auto"
                     type="button"
                     data-bs-toggle="collapse"
-                    data-bs-target="#bookingDetails-<%= booking._id %>"
+                    data-bs-target="#historyDetails-<%= booking._id %>"
                     aria-expanded="false"
-                    aria-controls="bookingDetails-<%= booking._id %>"
+                    aria-controls="historyDetails-<%= booking._id %>"
                   >
                     View Additional Details
                   </button>
 
-                  <div class="collapse" id="bookingDetails-<%= booking._id %>">
+                  <div class="collapse" id="historyDetails-<%= booking._id %>">
                     <div class="booking-extra">
                       <p class="mb-1"><strong>Booking ID:</strong> <%= booking._id %></p>
                       <p class="mb-1"><strong>User Email:</strong> <%= booking.user?.email || "Not available" %></p>
-                      <p class="mb-0"><strong>Requested:</strong> <%= booking.createdAt.toDateString() %></p>
+                      <p class="mb-1"><strong>Requested:</strong> <%= booking.createdAt.toDateString() %></p>
+                      <p class="mb-0"><strong>Fulfilled:</strong> <%= new Date(booking.completedAt || booking.updatedAt).toDateString() %></p>
 
                       <% if (booking.notes) { %>
                         <div class="pt-3">
@@ -78,10 +82,6 @@
                       <% } %>
                     </div>
                   </div>
-
-                  <form action="/admin/bookings/<%= booking._id %>/complete" method="POST" class="mt-auto" onsubmit="return confirm('Mark this booking as fulfilled? It will be removed from this dashboard.');">
-                    <button type="submit" class="btn btn-primary w-100">Mark as Fulfilled</button>
-                  </form>
                 </div>
               </article>
             </div>
@@ -89,7 +89,7 @@
         </div>
       <% } else { %>
         <div class="car-card p-4">
-          <p class="text-secondary mb-0">No active customer bookings right now.</p>
+          <p class="text-secondary mb-0">No completed services have been recorded yet.</p>
         </div>
       <% } %>
     </div>

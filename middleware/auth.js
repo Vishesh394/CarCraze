@@ -1,5 +1,6 @@
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
+const Admin = require("../models/Admin");
 
 function parseCookies(cookieHeader = "") {
   return cookieHeader
@@ -72,4 +73,35 @@ exports.redirectIfAuthenticated = (req, res, next) => {
   }
 
   return next();
+};
+
+exports.requireAdmin = async (req, res, next) => {
+  try {
+    const cookies = parseCookies(req.headers.cookie);
+    const token = cookies.token;
+
+    if (!token) {
+      return res.redirect("/admin/login");
+    }
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    if (decoded.type !== "admin") {
+      res.clearCookie("token", { path: "/" });
+      return res.redirect("/admin/login");
+    }
+
+    const admin = await Admin.findById(decoded.id).select("fullname email role");
+
+    if (!admin) {
+      res.clearCookie("token", { path: "/" });
+      return res.redirect("/admin/login");
+    }
+
+    req.currentAdmin = admin;
+    res.locals.currentAdmin = admin;
+    return next();
+  } catch (error) {
+    res.clearCookie("token", { path: "/" });
+    return res.redirect("/admin/login");
+  }
 };
