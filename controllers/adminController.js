@@ -3,6 +3,7 @@ const bcrypt = require("bcryptjs")
 const jwt = require("jsonwebtoken")
 const mongoose = require("mongoose")
 const Service = require("../models/service")
+const Booking = require("../models/Booking")
 
 const isBrowserFormRequest = (req) => {
     const acceptHeader = req.headers.accept || ""
@@ -177,6 +178,24 @@ exports.listServices = async (req, res) => {
         }
 
         return res.render("admin/services", { services })
+    } catch (error) {
+        console.log(error)
+        return res.status(500).json({ message: "Server Error" })
+    }
+}
+
+exports.listBookings = async (req, res) => {
+    try {
+        const bookings = await Booking.find()
+            .populate("service", "title priceMin priceMax price")
+            .populate("user", "fullname email")
+            .sort({ createdAt: -1 })
+
+        if (!isBrowserFormRequest(req)) {
+            return res.status(200).json({ bookings })
+        }
+
+        return res.render("admin/bookings", { bookings })
     } catch (error) {
         console.log(error)
         return res.status(500).json({ message: "Server Error" })

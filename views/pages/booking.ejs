@@ -3,32 +3,120 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Service | Car craze</title>
     <link rel="stylesheet" href="/css/bootstrap.min.css">
     <link rel="stylesheet" href="/css/styles.css">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <title>Book Service | CarBarn</title>
 </head>
 <body class="bg-surface">
     <%- include('../partials/navbar') %>
 
     <main class="section">
         <div class="container">
-            <div class="row justify-content-center">
-                <div class="col-lg-8">
-                    <div class="car-card p-4 p-md-5 text-center">
-                        <p class="eyebrow mb-2">Book with confidence</p>
-                        <h1 class="display-6 fw-semibold text-white mb-3">Schedule your next car service with ease.</h1>
+            <div class="row g-4 justify-content-center">
+                <div class="col-lg-5">
+                    <div class="car-card p-4 h-100">
+                        <p class="eyebrow mb-2">Selected service</p>
+                        <h1 class="display-6 fw-semibold text-white mb-3">
+                            <%= selectedService ? selectedService.title : "Choose your booking details" %>
+                        </h1>
                         <p class="text-secondary mb-4">
-                            Welcome<% if (currentUser) { %>, <%= currentUser.fullname.split(' ')[0] %><% } %>. Choose CarBarn for reliable maintenance, careful inspections, and support that keeps your vehicle ready for every journey.
+                            Welcome<% if (currentUser) { %>, <%= currentUser.fullname.split(' ')[0] %><% } %>. Confirm your details below and we will reserve your service request.
                         </p>
-                        <div class="d-flex flex-wrap justify-content-center gap-3">
-                            <a href="/services" class="btn btn-primary">View Services</a>
-                            <a href="/about" class="btn btn-outline-light">Learn More About Us</a>
-                        </div>
-                        <div class="mt-4 booking-note">
-                            <p class="mb-0">You are signed in and ready to continue with your service selection.</p>
-                        </div>
+
+                        <% if (selectedService) { %>
+                            <div class="mb-3">
+                                <span class="badge rounded-pill bg-primary-subtle text-primary">
+                                    Rs <%= selectedService.priceMin ?? selectedService.price %> - <%= selectedService.priceMax ?? selectedService.price %>
+                                </span>
+                            </div>
+                            <p class="mb-0"><%= selectedService.description || "Professional service delivered with attention to detail and dependable support." %></p>
+                        <% } else { %>
+                            <p class="mb-0">No service was pre-selected. You can still continue, or go back and choose one from the services page.</p>
+                            <div class="mt-4">
+                                <a href="/services" class="btn btn-outline-light">Back to Services</a>
+                            </div>
+                        <% } %>
+                    </div>
+                </div>
+
+                <div class="col-lg-7">
+                    <div class="car-card p-4 p-md-5">
+                        <p class="eyebrow mb-2">Booking form</p>
+                        <h2 class="fw-semibold text-white mb-4">Confirm Booking</h2>
+
+                        <% if (typeof error !== "undefined" && error) { %>
+                            <div class="alert alert-danger" role="alert">
+                                <%= error %>
+                            </div>
+                        <% } %>
+
+                        <form action="/booking" method="POST" class="row g-3">
+                            <input type="hidden" name="serviceId" value="<%= selectedService?._id || '' %>">
+                            <input type="hidden" name="serviceTitle" value="<%= selectedService?.title || 'Car Service' %>">
+
+                            <div class="col-md-6">
+                                <label for="customerName" class="form-label">Full Name</label>
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    id="customerName"
+                                    name="customerName"
+                                    value="<%= currentUser?.fullname || '' %>"
+                                    required
+                                >
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="phone" class="form-label">Phone Number</label>
+                                <input
+                                    type="tel"
+                                    class="form-control"
+                                    id="phone"
+                                    name="phone"
+                                    placeholder="Enter your phone number"
+                                    required
+                                >
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="bookingDate" class="form-label">Preferred Date</label>
+                                <input
+                                    type="date"
+                                    class="form-control"
+                                    id="bookingDate"
+                                    name="bookingDate"
+                                    required
+                                >
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="vehicleModel" class="form-label">Vehicle Model</label>
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    id="vehicleModel"
+                                    name="vehicleModel"
+                                    placeholder="Ex. Hyundai Creta"
+                                    required
+                                >
+                            </div>
+
+                            <div class="col-12">
+                                <label for="notes" class="form-label">Additional Notes</label>
+                                <textarea
+                                    class="form-control"
+                                    id="notes"
+                                    name="notes"
+                                    rows="4"
+                                    placeholder="Mention any issue, scratches, timing preference, or special request"
+                                ></textarea>
+                            </div>
+
+                            <div class="col-12 d-flex flex-wrap gap-3 pt-2">
+                                <button type="submit" class="btn btn-primary">Confirm Booking</button>
+                                <a href="/services" class="btn btn-outline-light">Back to Services</a>
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>

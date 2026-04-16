@@ -10,6 +10,7 @@ router.get("/login", (req, res) => res.render("admin/login"));
 router.get("/dashboard", (req, res) => res.render("admin/dashboard"));
 router.get("/services/add", (req, res) => res.render("admin/addServices"));
 router.get("/services", adminController.listServices);
+router.get("/bookings", adminController.listBookings);
 router.get("/services/:id/edit", adminController.editServicePage);
 
 // API handlers (existing)

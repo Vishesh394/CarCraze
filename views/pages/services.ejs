@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Services | CarBarn</title>
+    <title>Services | Car craze</title>
     <link rel="stylesheet" href="/css/bootstrap.min.css">
     <link rel="stylesheet" href="/css/styles.css">
 </head>
@@ -31,7 +31,7 @@
                                     <span class="badge rounded-pill bg-primary-subtle text-primary">Rs <%= service.priceMin ?? service.price %> - <%= service.priceMax ?? service.price %></span>
                                 </div>
                                 <p class="small mb-3"><%= service.description || "Professional service delivered with attention to detail and dependable support." %></p>
-                                <a href="/booking" class="btn btn-primary mt-auto">Book This Service</a>
+                                <a href="/booking?service=<%= service._id %>" class="btn btn-primary mt-auto">Book This Service</a>
                             </div>
                         </article>
                     </div>
