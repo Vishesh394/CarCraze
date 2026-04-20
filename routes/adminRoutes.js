@@ -10,7 +10,7 @@ router.get("/", (req, res) => res.redirect("/admin/login"));
 router.get("/login", (req, res) => res.render("admin/login", { error: null, formData: {} }));
 router.get("/register", (req, res) => { res.render("admin/register") });
 router.get("/dashboard", requireAdmin, (req, res) => res.render("admin/dashboard"));
-router.get("/services/add", requireAdmin, (req, res) => res.render("admin/addServices"));
+router.get("/services/add", requireAdmin, (req, res) => res.render("admin/addServices",{error:null, formData:{}}));
 router.get("/services", requireAdmin, adminController.listServices);
 router.get("/accessories/add", requireAdmin, adminController.addAccessoryPage);
 router.get("/accessories", requireAdmin, adminController.listAccessories);
