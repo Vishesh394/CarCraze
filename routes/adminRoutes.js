@@ -8,6 +8,7 @@ router.get("/", (req, res) => res.redirect("/admin/login"));
 
 // Admin pages
 router.get("/login", (req, res) => res.render("admin/login", { error: null, formData: {} }));
+router.get("/register", (req, res) => { res.render("admin/register") });
 router.get("/dashboard", requireAdmin, (req, res) => res.render("admin/dashboard"));
 router.get("/services/add", requireAdmin, (req, res) => res.render("admin/addServices"));
 router.get("/services", requireAdmin, adminController.listServices);
@@ -17,6 +18,7 @@ router.get("/bookings", requireAdmin, adminController.listBookings);
 router.get("/bookings/history", requireAdmin, adminController.listCompletedBookings);
 router.get("/services/:id/edit", requireAdmin, adminController.editServicePage);
 router.get("/accessories/:id/edit", requireAdmin, adminController.editAccessoryPage);
+
 
 // API handlers (existing)
 router.post("/register", adminController.register);

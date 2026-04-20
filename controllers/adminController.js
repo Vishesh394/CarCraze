@@ -68,45 +68,41 @@ const normalizeAccessoryData = (body) => {
     }
 }
 
-//Register
 exports.register = async (req, res) => {
     try {
-        const { fullname, email, password, role = "admin" } = req.body
-        //check if admin already exists
-        const adminExists = await Admin.findOne({ email })
+        const { fullname, email, password } = req.body;
+
+        // check if admin exists
+        const adminExists = await Admin.findOne({ email });
         if (adminExists) {
-
-            return res.status(400).json({ message: "Email already exists" })
-
+            return res.render("admin/register", {
+                error: "Email already exists",
+                formData: req.body
+            });
         }
-        //hash password
-        const hashPassword = await bcrypt.hash(password, 10)
-        //create admin
-        const admin = await Admin.create({
+
+        // hash password
+        const hashPassword = await bcrypt.hash(password, 10);
+
+        // create admin
+        await Admin.create({
             fullname,
             email,
             password: hashPassword,
-            role
+            role: "admin"
+        });
 
-        })
-        res.status(201).json({
-            message: "Admin registered successfully",
-            admin: {
-                id: admin._id,
-                fullname: admin.fullname,
-                email: admin.email,
-                role: admin.role
-            }
-        })
+        // redirect after success
+        res.redirect("/admin/login");
 
-    }
-    catch (error) {
+    } catch (error) {
         console.log(error);
-        res.status(500).json({
-            message: "Server Error"
-        })
+        res.render("admin/register", {
+            error: "Server Error",
+            formData: req.body
+        });
     }
-}
+};
 
 //--------- Login --------------
 exports.login = async (req, res) => {
@@ -547,4 +543,4 @@ exports.deleteAccessory = async (req, res) => {
 exports.getService=(req,res)=>{
     res.render("admin/addServices")
 }
-//add service
+//add service 
