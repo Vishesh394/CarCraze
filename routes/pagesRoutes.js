@@ -19,6 +19,8 @@ router.get("/signup", redirectIfAuthenticated, userController.renderSignup);
 router.post("/signup", redirectIfAuthenticated, userController.signup);
 router.get("/login", redirectIfAuthenticated, userController.renderLogin);
 router.post("/login", redirectIfAuthenticated, userController.login);
+router.get("/forgot-password", redirectIfAuthenticated, userController.renderForgotPassword);
+router.post("/forgot-password", redirectIfAuthenticated, userController.forgotPassword);
 router.post("/logout", userController.logout);
 
 module.exports = router;

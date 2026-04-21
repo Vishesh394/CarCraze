@@ -10,37 +10,59 @@
 <body class="bg-surface">
   <%- include("../partials/navbar") %>
 
-  <main class="section">
+  <main class="section auth-shell">
     <div class="container">
       <div class="row justify-content-center">
-        <div class="col-lg-6 col-xl-5">
-          <div class="car-card">
-            <div class="car-card-body p-4 p-md-5">
-              <p class="eyebrow mb-2">Customer access</p>
-              <h1 class="display-6 mb-3">Sign in to continue exploring Car craze.</h1>
-              <p class="mb-4">Log in to explore services, book appointments, and browse accessories with a smoother experience.</p>
+        <div class="col-lg-8 col-xl-7">
+          <section class="auth-panel">
+            <div class="auth-copy">
+              <p class="eyebrow mb-3">Customer access</p>
+              <h1 class="auth-title">Sign in to continue exploring CarCraze.</h1>
+              <p class="auth-subtitle mb-0">
+                Log in to explore services, book appointments, and browse accessories with a smoother experience.
+              </p>
+            </div>
 
+            <div class="auth-form-wrap">
               <% if (error) { %>
-                <div class="alert alert-danger rounded-4 mb-4"><%= error %></div>
+                <div class="alert alert-danger auth-alert" role="alert"><%= error %></div>
               <% } %>
 
-              <form action="/login" method="post" class="d-grid gap-3">
+              <form action="/login" method="post" class="d-grid auth-form" autocomplete="off">
                 <input type="hidden" name="nextPath" value="<%= nextPath %>" />
+
                 <div>
-                  <label class="form-label small">Email Address</label>
+                  <label class="form-label auth-label">Email Address</label>
                   <input
                     type="email"
                     name="email"
-                    class="form-control"
+                    class="form-control auth-input"
                     value="<%= formData.email || '' %>"
                     required
                   />
                 </div>
+
                 <div>
-                  <label class="form-label small">Password</label>
-                  <input type="password" name="password" class="form-control" required />
+                  <label class="form-label auth-label">Password</label>
+                  <input type="password" name="password" class="form-control auth-input" autocomplete="current-password" required />
                 </div>
-                <button type="submit" class="btn btn-primary w-100">Sign In</button>
+
+                <div class="auth-form-meta">
+                  <div class="form-check m-0">
+                    <input
+                      class="form-check-input"
+                      type="checkbox"
+                      value="true"
+                      id="rememberMe"
+                      name="rememberMe"
+                      <%= formData.rememberMe ? "checked" : "" %>
+                    />
+                    <label class="form-check-label auth-meta-text" for="rememberMe">Remember me</label>
+                  </div>
+                  <a href="/forgot-password" class="auth-link">Forgot password?</a>
+                </div>
+
+                <button type="submit" class="btn btn-primary auth-submit">Sign In</button>
               </form>
 
               <p class="small mt-4 mb-0">
@@ -48,7 +70,7 @@
                 <a href="/signup<%= nextPath && nextPath !== '/' ? '?next=' + encodeURIComponent(nextPath) : '' %>">Create your account</a>
               </p>
             </div>
-          </div>
+          </section>
         </div>
       </div>
     </div>

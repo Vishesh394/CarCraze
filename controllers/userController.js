@@ -11,9 +11,16 @@ function normalizeNextPath(nextPath) {
 }
 
 function setUserCookie(res, token) {
-  res.setHeader(
+  return res.setHeader(
     "Set-Cookie",
     `userToken=${encodeURIComponent(token)}; Path=/; HttpOnly; Max-Age=86400; SameSite=Lax`
+  );
+}
+
+function setUserCookieWithDuration(res, token, maxAgeSeconds) {
+  return res.setHeader(
+    "Set-Cookie",
+    `userToken=${encodeURIComponent(token)}; Path=/; HttpOnly; Max-Age=${maxAgeSeconds}; SameSite=Lax`
   );
 }
 
@@ -30,6 +37,14 @@ exports.renderLogin = (req, res) => {
     error: null,
     formData: {},
     nextPath: normalizeNextPath(req.query.next)
+  });
+};
+
+exports.renderForgotPassword = (req, res) => {
+  return res.render("auth/forgotPassword", {
+    error: null,
+    success: null,
+    formData: {}
   });
 };
 
@@ -74,9 +89,10 @@ exports.signup = async (req, res) => {
 };
 
 exports.login = async (req, res) => {
-  const { email = "", password = "", nextPath = "/" } = req.body;
+  const { email = "", password = "", nextPath = "/", rememberMe } = req.body;
   const safeNextPath = normalizeNextPath(nextPath);
-  const formData = { email, nextPath: safeNextPath };
+  const rememberUser = rememberMe === "true" || rememberMe === "on";
+  const formData = { email, nextPath: safeNextPath, rememberMe: rememberUser };
 
   try {
     const normalizedEmail = email.trim().toLowerCase();
@@ -100,10 +116,10 @@ exports.login = async (req, res) => {
     }
 
     const token = jwt.sign({ id: user._id, type: "user" }, process.env.JWT_SECRET, {
-      expiresIn: "1d"
+      expiresIn: rememberUser ? "30d" : "1d"
     });
 
-    setUserCookie(res, token);
+    setUserCookieWithDuration(res, token, rememberUser ? 30 * 24 * 60 * 60 : 24 * 60 * 60);
     return res.redirect(safeNextPath);
   } catch (error) {
     console.log(error);
@@ -111,6 +127,44 @@ exports.login = async (req, res) => {
       error: "We could not sign you in right now. Please try again.",
       formData,
       nextPath: safeNextPath
+    });
+  }
+};
+
+exports.forgotPassword = async (req, res) => {
+  const email = req.body.email?.trim() || "";
+
+  try {
+    if (!email) {
+      return res.status(400).render("auth/forgotPassword", {
+        error: "Please enter the email address linked to your account.",
+        success: null,
+        formData: { email }
+      });
+    }
+
+    const normalizedEmail = email.toLowerCase();
+    const user = await User.findOne({ email: normalizedEmail });
+
+    if (!user) {
+      return res.status(400).render("auth/forgotPassword", {
+        error: "We couldn't find an account with that email.",
+        success: null,
+        formData: { email }
+      });
+    }
+
+    return res.render("auth/forgotPassword", {
+      error: null,
+      success: "Account found. Email reset is not configured yet, so please contact support or the site owner for a password update.",
+      formData: { email }
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).render("auth/forgotPassword", {
+      error: "We could not process your request right now. Please try again.",
+      success: null,
+      formData: { email }
     });
   }
 };
