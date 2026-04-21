@@ -8,6 +8,7 @@ router.get("/", (req, res) => res.redirect("/admin/login"));
 
 // Admin pages
 router.get("/login", (req, res) => res.render("admin/login", { error: null, formData: {} }));
+router.get("/forgot-password", adminController.forgotPasswordPage);
 router.get("/register", (req, res) => { res.render("admin/register") });
 router.get("/dashboard", requireAdmin, (req, res) => res.render("admin/dashboard"));
 router.get("/services/add", requireAdmin, (req, res) => res.render("admin/addServices",{error:null, formData:{}}));
@@ -23,6 +24,7 @@ router.get("/accessories/:id/edit", requireAdmin, adminController.editAccessoryP
 // API handlers (existing)
 router.post("/register", adminController.register);
 router.post("/login", adminController.login);
+router.post("/forgot-password", adminController.forgotPassword);
 router.post("/logout", requireAdmin, adminController.logout);
 router.post("/services", requireAdmin, adminController.createService);
 router.post("/accessories", requireAdmin, adminController.createAccessory);

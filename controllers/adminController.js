@@ -107,12 +107,15 @@ exports.register = async (req, res) => {
 //--------- Login --------------
 exports.login = async (req, res) => {
     try {
-        const { email, password } = req.body
+        const { email, password, rememberMe } = req.body
         const wantsHTML = isBrowserFormRequest(req)
         const renderLoginError = (message) => {
             return res.status(400).render("admin/login", {
                 error: message,
-                formData: {}
+                formData: {
+                    email: email || "",
+                    rememberMe: rememberMe === "true" || rememberMe === "on"
+                }
             })
         }
 
@@ -133,16 +136,22 @@ exports.login = async (req, res) => {
             return res.status(400).json({ message: "Invalid email or password" })
         }
         
+        const rememberAdmin = rememberMe === "true" || rememberMe === "on"
+        const tokenLifetime = rememberAdmin ? "30d" : "1d"
+        const cookieMaxAge = rememberAdmin
+            ? 30 * 24 * 60 * 60 * 1000
+            : 24 * 60 * 60 * 1000
+
         const token = jwt.sign(
             { id: admin._id, type: "admin" },
             process.env.JWT_SECRET, 
-            { expiresIn: "1d" }
+            { expiresIn: tokenLifetime }
         )
         // set token cookie for browser flows
         res.cookie("token", token, {
             httpOnly: true,
             sameSite: "lax",
-            maxAge: 24 * 60 * 60 * 1000
+            maxAge: cookieMaxAge
         })
 
         // If browser form submission, redirect to dashboard; else return JSON
@@ -159,6 +168,51 @@ exports.login = async (req, res) => {
         console.log(error)
         res.status(500).json({
             message: "Server Error"
+        })
+    }
+}
+
+exports.forgotPasswordPage = (req, res) => {
+    return res.render("admin/forgotPassword", {
+        error: null,
+        success: null,
+        formData: {}
+    })
+}
+
+exports.forgotPassword = async (req, res) => {
+    try {
+        const email = req.body.email?.trim() || ""
+
+        if (!email) {
+            return res.status(400).render("admin/forgotPassword", {
+                error: "Please enter your admin email address.",
+                success: null,
+                formData: { email }
+            })
+        }
+
+        const admin = await Admin.findOne({ email })
+
+        if (!admin) {
+            return res.status(400).render("admin/forgotPassword", {
+                error: "We couldn't find an admin account with that email.",
+                success: null,
+                formData: { email }
+            })
+        }
+
+        return res.render("admin/forgotPassword", {
+            error: null,
+            success: "Account found. Email-based reset is not configured yet, so please contact the site owner to update this password.",
+            formData: { email }
+        })
+    } catch (error) {
+        console.log(error)
+        return res.status(500).render("admin/forgotPassword", {
+            error: "Server Error",
+            success: null,
+            formData: { email: req.body.email?.trim() || "" }
         })
     }
 }

@@ -10,32 +10,69 @@
 <body class="bg-surface">
   <%- include("../partials/navbar") %>
 
-  <main class="section">
+  <main class="section auth-shell">
     <div class="container">
       <div class="row justify-content-center">
-        <div class="col-md-6 col-lg-5">
-          <div class="car-card">
-            <div class="car-card-body">
-              <p class="eyebrow text-uppercase text-secondary mb-1">Admin access</p>
-              <h1 class="h3 fw-semibold text-white mb-3">Sign in to the dashboard</h1>
+        <div class="col-lg-8 col-xl-7">
+          <section class="auth-panel">
+            <div class="auth-copy">
+              <p class="eyebrow mb-3">Admin access</p>
+              <h1 class="auth-title">Sign in to continue managing CarCraze.</h1>
+              <p class="auth-subtitle mb-0">
+                Log in to manage services, track bookings, and update accessories from the dashboard.
+              </p>
+            </div>
+
+            <div class="auth-form-wrap">
               <% if (typeof error !== "undefined" && error) { %>
-                <div class="alert alert-danger mb-3" role="alert">
+                <div class="alert alert-danger auth-alert" role="alert">
                   <%= error %>
                 </div>
               <% } %>
-              <form action="/admin/login" method="post" class="d-grid gap-3" autocomplete="off">
+
+              <form action="/admin/login" method="post" class="d-grid auth-form" autocomplete="off">
                 <div>
-                  <label class="form-label text-secondary small">Email Address</label>
-                  <input name="email" type="email" class="form-control" value="" autocomplete="off" required />
+                  <label class="form-label auth-label">Email Address</label>
+                  <input
+                    name="email"
+                    type="email"
+                    class="form-control auth-input"
+                    value="<%= formData?.email || '' %>"
+                    autocomplete="off"
+                    required
+                  />
                 </div>
+
                 <div>
-                  <label class="form-label text-secondary small">Password</label>
-                  <input name="password" type="password" class="form-control" autocomplete="new-password" required />
+                  <label class="form-label auth-label">Password</label>
+                  <input
+                    name="password"
+                    type="password"
+                    class="form-control auth-input"
+                    autocomplete="current-password"
+                    required
+                  />
                 </div>
-                <button type="submit" class="btn btn-primary w-100">Sign In</button>
+
+                <div class="auth-form-meta">
+                  <div class="form-check m-0">
+                    <input
+                      class="form-check-input"
+                      type="checkbox"
+                      value="true"
+                      id="rememberMe"
+                      name="rememberMe"
+                      <%= formData?.rememberMe ? "checked" : "" %>
+                    />
+                    <label class="form-check-label auth-meta-text" for="rememberMe">Remember me</label>
+                  </div>
+                  <a href="/admin/forgot-password" class="auth-link">Forgot password?</a>
+                </div>
+
+                <button type="submit" class="btn btn-primary auth-submit">Sign In</button>
               </form>
             </div>
-          </div>
+          </section>
         </div>
       </div>
     </div>
